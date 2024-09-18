@@ -82,7 +82,7 @@ class Pipeline:
                         f"needed {model.get_input_columns(level)}, provided {columns[level]}"
                     )
                 columns[level].update(model.get_output_columns(level))
-        log.info(f"Pipeline has been validated")
+        log.info("Pipeline has been validated")
 
     def __str__(self):
         return " -> ".join(model.name for model in self.models)
