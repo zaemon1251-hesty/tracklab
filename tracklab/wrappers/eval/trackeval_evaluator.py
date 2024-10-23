@@ -19,8 +19,8 @@ class TrackEvalEvaluator(EvaluatorBase):
         self.cfg = cfg
         self.tracking_dataset = tracking_dataset
         self.eval_set = eval_set
-        self.trackeval_dataset_name = type(self.tracking_dataset).__name__
-        self.trackeval_dataset_class = getattr(trackeval.datasets, cfg.dataset.dataset_class)
+        self.trackeval_dataset_name = type(self.tracking_dataset).__name__ # SoccerNetGameState
+        self.trackeval_dataset_class = getattr(trackeval.datasets, cfg.dataset.dataset_class) # trackeval.datasets.SoccerNetGS
         self.show_progressbar = show_progressbar
         self.dataset_path = dataset_path
 
@@ -31,7 +31,7 @@ class TrackEvalEvaluator(EvaluatorBase):
         save_classes = self.trackeval_dataset_class.__name__ != 'MotChallenge2DBox'
 
         # Save predictions
-        pred_save_path = Path(self.cfg.dataset.TRACKERS_FOLDER) / f"{self.trackeval_dataset_name}-{self.eval_set}" / tracker_name
+        pred_save_path = Path(self.cfg.dataset.TRACKERS_FOLDER) / f"{self.trackeval_dataset_class.__name__}-{self.eval_set}" / tracker_name
         self.tracking_dataset.save_for_eval(
             tracker_state.detections_pred,
             tracker_state.image_pred,
@@ -51,7 +51,7 @@ class TrackEvalEvaluator(EvaluatorBase):
             return
 
         # Save ground truth
-        gt_save_path = Path(self.cfg.dataset.GT_FOLDER) / f"{self.trackeval_dataset_name}-{self.eval_set}"
+        gt_save_path = Path(self.cfg.dataset.GT_FOLDER) / f"{self.trackeval_dataset_class.__name__}-{self.eval_set}"
         if self.cfg.save_gt:
             self.tracking_dataset.save_for_eval(
                 tracker_state.detections_gt,

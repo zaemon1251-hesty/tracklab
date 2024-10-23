@@ -161,7 +161,7 @@ def extract_category(attributes):
         jersey_number = None
         category = f"{role}"
     else:
-        assert attributes['role'] == "other"
+        assert attributes['role'] == "other" or attributes['role'] is None
         team = None
         role = "other"
         jersey_number = None
@@ -183,7 +183,7 @@ def dict_to_df_detections(annotation_dict, categories_list):
     df['jersey_number'] = df.apply(lambda row: row['attributes']['jersey'], axis=1)
     df['position'] = None # df.apply(lambda row: row['attributes']['position'], axis=1)         for now there is no position in the json file
     df['category'] = df.apply(lambda row: extract_category(row['attributes']), axis=1)
-    df['track_id'] = df['track_id'].astype(int)
+    df['track_id'] = df['track_id']
     # df['id'] = df['id']
 
     columns = ['id', 'image_id', 'track_id', 'bbox_ltwh', 'bbox_pitch', 'team_cluster',
@@ -237,6 +237,9 @@ def video_dir_to_dfs(args):
             categories_data = gamestate_data['categories']
             video_id = info_data.get("id", str(video_folder.split('-')[-1]))
 
+            if len(annotations_data) == 0:
+                return None
+            
             detections_df, annotation_pitch_camera_df, video_level_categories = dict_to_df_detections(annotations_data, categories_data)
             # detections_df['image_id'] = detections_df['image_id'] - 1 + image_counter
             detections_df['video_id'] = video_id
@@ -254,19 +257,19 @@ def video_dir_to_dfs(args):
                 'seq_length': nframes,
                 'im_width': int(images_data[0].get('width', 0)),
                 'im_height': int(images_data[0].get('height', 0)),
-                'game_id': int(info_data.get('gameID', 0)),
-                'action_position': int(info_data.get('action_position', 0)),
+                'game_id': info_data.get('gameID', 0),
+                'action_position': info_data.get('action_position', 0),
                 'action_class': info_data.get('action_class', ''),
                 'visibility': info_data.get('visibility', ''),
-                'clip_start': int(info_data.get('clip_start', 0)),
+                'clip_start': info_data.get('clip_start', 0),
                 'game_time_start': info_data.get('game_time_start', ' - ').split(' - ')[1],
                 # Remove the half period index
                 'game_time_stop': info_data.get('game_time_stop', ' - ').split(' - ')[1],  # Remove the half period index
-                'clip_stop': int(info_data.get('clip_stop', 0)),
+                'clip_stop': info_data.get('clip_stop', 0),
                 'num_tracklets': int(info_data.get('num_tracklets', 0)),
-                'half_period_start': int(info_data.get('game_time_start', '0 - ').split(' - ')[0]),
+                'half_period_start': info_data.get('game_time_start', '0 - ').split(' - ')[0],
                 # Add the half period start column
-                'half_period_stop': int(info_data.get('game_time_stop', '0 - ').split(' - ')[0]),
+                'half_period_stop': info_data.get('game_time_stop', '0 - ').split(' - ')[0],
                 # Add the half period stop column
             }
             # categories_list += video_level_categories
@@ -281,6 +284,9 @@ def video_dir_to_dfs(args):
                 'is_labeled': [i['is_labeled'] for i in images_data],
             })
             annotation_pitch_camera_df["video_id"] = video_id
+            
+            if "lines" not in annotation_pitch_camera_df.columns:
+                annotation_pitch_camera_df["lines"] = None
         
         return {
             "video_metadata": video_metadata,
