@@ -6,7 +6,7 @@ outputs/
 multiruns/
 pretrained_models/
 .vscode/
-# notebooks/
+notebooks/
 weights/
 slurm/
 states/
