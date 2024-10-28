@@ -287,6 +287,9 @@ def video_dir_to_dfs(args):
             
             if "lines" not in annotation_pitch_camera_df.columns:
                 annotation_pitch_camera_df["lines"] = None
+            
+            # # img_metadata_dfのidに重複がある場合は、重複を削除する
+            # img_metadata_df = img_metadata_df.drop_duplicates(subset='id')
         
         return {
             "video_metadata": video_metadata,
@@ -354,7 +357,9 @@ def load_set(dataset_path, nvid=-1, vids_filter_set=None):
 
         # Use video_id, image_id, track_id as unique id
         detections = detections.sort_values(by=['video_id', 'image_id', 'track_id'], ascending=[True, True, True])
-        detections['id'] = detections['video_id'].astype(str) + "_" + detections['image_id'].astype(str) + "_" + detections['track_id'].astype(str)
+        
+        # v3の track_id の付与方法的に、これだと重複が発生するから、一旦コメントアウト
+        # detections['id'] = detections['video_id'].astype(str) + "_" + detections['image_id'].astype(str) + "_" + detections['track_id'].astype(str)
 
         # add camera parameters and pitch as ground truth
         pitch_camera = pd.concat(annotations_pitch_camera_list, ignore_index=True)
