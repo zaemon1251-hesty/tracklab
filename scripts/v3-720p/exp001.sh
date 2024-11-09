@@ -1,7 +1,7 @@
 # 概要: reidをtestするだけ -> train epoch 1
 # 仮説: 
 # 設定:
-#   映像データ SoccerNet FullHD 1080p
+#   映像データ SoccerNet 720p
 #   アノテーションデータ v3
 
 export CUDA_VISIBLE_DEVICES=2; python -m tracklab.main -cn soccernet-v3-720p

@@ -1,10 +1,11 @@
 # 概要: reidを学習する
-# 仮説: epochを増やせば、チーム分類の精度が上がるのではないか
+# 仮説: 1080pで学習済みのモデルより、フルスクラッチで学習したモデルの方が精度が高いのではないか
 # 設定:
 #   映像データ SoccerNet 720p
 #   アノテーションデータ v3
 
-export CUDA_VISIBLE_DEVICES=3; python -m tracklab.main -cn soccernet-v3-720p-exp002
+
+export CUDA_VISIBLE_DEVICES=3; python -m tracklab.main -cn soccernet-v3-720p-exp003
 
 << COMMENTOUT
 => Loaded ReidDataset
