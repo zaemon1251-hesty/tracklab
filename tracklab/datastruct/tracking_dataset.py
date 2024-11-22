@@ -12,9 +12,11 @@ log = logging.getLogger(__name__)
 class SetsDict(dict):
     def __getitem__(self, key):
         if key not in self:
-            raise KeyError(f"Trying to access a '{key}' split of the dataset that is not available. "
-                           f"Available splits are {list(self.keys())}. "
-                           f"Make sur this split name is correct or is available in the dataset folder.")
+            raise KeyError(
+                f"Trying to access a '{key}' split of the dataset that is not available. "
+                f"Available splits are {list(self.keys())}. "
+                f"Make sur this split name is correct or is available in the dataset folder."
+            )
         return super().__getitem__(key)
 
 
@@ -35,23 +37,34 @@ class TrackingDataset(ABC):
         nframes: int = -1,
         vids_dict: list = None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         self.dataset_path = Path(dataset_path)
         self.sets = SetsDict(sets)
         sub_sampled_sets = SetsDict()
         for set_name, split in self.sets.items():
-            vid_list = vids_dict[set_name] if vids_dict is not None and set_name in vids_dict else None
+            vid_list = (
+                vids_dict[set_name]
+                if vids_dict is not None and set_name in vids_dict
+                else None
+            )
             sub_sampled_sets[set_name] = self._subsample(split, nvid, nframes, vid_list)
         self.sets = sub_sampled_sets
 
     def _subsample(self, tracking_set, nvid, nframes, vids_names):
-        if nvid < 1 and nframes < 1 and (vids_names is None or len(vids_names) == 0) or tracking_set is None:
+        if (
+            nvid < 1
+            and nframes < 1
+            and (vids_names is None or len(vids_names) == 0)
+            or tracking_set is None
+        ):
             return tracking_set
 
         # filter videos:
         if vids_names is not None and len(vids_names) > 0:
-            assert set(vids_names).issubset(tracking_set.video_metadatas.name.unique()), f"Some videos to process {set(vids_names) - set(tracking_set.video_metadatas.name.unique())} does not exist in the tracking set"
+            assert set(vids_names).issubset(
+                tracking_set.video_metadatas.name.unique()
+            ), f"Some videos to process {set(vids_names) - set(tracking_set.video_metadatas.name.unique())} does not exist in the tracking set"
             videos_to_keep = tracking_set.video_metadatas[
                 tracking_set.video_metadatas.name.isin(vids_names)
             ].index
@@ -83,13 +96,20 @@ class TrackingDataset(ABC):
 
         # filter detections:
         tiny_detections = None
-        if tracking_set.detections_gt is not None and not tracking_set.detections_gt.empty:
+        if (
+            tracking_set.detections_gt is not None
+            and not tracking_set.detections_gt.empty
+        ):
             tiny_detections = tracking_set.detections_gt[
                 tracking_set.detections_gt.image_id.isin(tiny_image_metadatas.index)
             ]
 
-        assert len(tiny_video_metadatas) > 0, "No videos left after subsampling the tracking set"
-        assert len(tiny_image_metadatas) > 0, "No images left after subsampling the tracking set"
+        assert (
+            len(tiny_video_metadatas) > 0
+        ), "No videos left after subsampling the tracking set"
+        assert (
+            len(tiny_image_metadatas) > 0
+        ), "No images left after subsampling the tracking set"
 
         return TrackingSet(
             tiny_video_metadatas,
@@ -97,7 +117,6 @@ class TrackingDataset(ABC):
             tiny_detections,
             tiny_image_gt,
         )
-
 
     @staticmethod
     def _mot_encoding(detections, image_metadatas, video_metadatas, bbox_column):
@@ -108,7 +127,7 @@ class TrackingDataset(ABC):
             detections.reset_index(drop=True),
             left_on="id",
             right_on="image_id",
-            suffixes=('', '_y')
+            suffixes=("", "_y"),
         )
         len_before_drop = len(df)
         df.dropna(
@@ -133,19 +152,21 @@ class TrackingDataset(ABC):
         df = df.assign(x=-1, y=-1, z=-1)
         return df
 
-
-    def save_for_eval(self,
-                      detections: pd.DataFrame,
-                      image_metadatas: pd.DataFrame,
-                      video_metadatas: pd.DataFrame,
-                      save_folder: str,
-                      bbox_column_for_eval="bbox_ltwh",
-                      save_classes=False,
-                      is_ground_truth=False,
-                      save_zip=True
-                      ):
+    def save_for_eval(
+        self,
+        detections: pd.DataFrame,
+        image_metadatas: pd.DataFrame,
+        video_metadatas: pd.DataFrame,
+        save_folder: str,
+        bbox_column_for_eval="bbox_ltwh",
+        save_classes=False,
+        is_ground_truth=False,
+        save_zip=True,
+    ):
         """Save predictions in MOT Challenge format."""
-        mot_df = self._mot_encoding(detections, image_metadatas, video_metadatas, bbox_column_for_eval)
+        mot_df = self._mot_encoding(
+            detections, image_metadatas, video_metadatas, bbox_column_for_eval
+        )
 
         save_path = os.path.join(save_folder)
         os.makedirs(save_path, exist_ok=True)
@@ -156,7 +177,9 @@ class TrackingDataset(ABC):
             file_path = os.path.join(save_path, f"{video['name']}.txt")
             file_df = mot_df[mot_df["video_id"] == id].copy()
             if file_df["frame"].min() == 0:
-                file_df["frame"] = file_df["frame"] + 1  # MOT Challenge format starts at 1
+                file_df["frame"] = (
+                    file_df["frame"] + 1
+                )  # MOT Challenge format starts at 1
             if not file_df.empty:
                 file_df.sort_values(by="frame", inplace=True)
                 clazz = "category_id" if save_classes else "x"

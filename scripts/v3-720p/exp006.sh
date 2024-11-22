@@ -1,11 +1,17 @@
 # 概要: reidを学習する
-# 仮説: 1080pで学習済みのモデルより、フルスクラッチで学習したモデルの方が精度が高いのではないか
+# 仮説: trainでのmAPはじゅうぶんたかいのでは？
 # 設定:
 #   映像データ SoccerNet 720p
 #   アノテーションデータ v3
 
 
-export CUDA_VISIBLE_DEVICES=3; python -m tracklab.main -cn soccernet-v3-720p-exp003
+export CUDA_VISIBLE_DEVICES=2; python -m tracklab.main -cn soccernet-v3-720p-exp003 \
+    modules.reid.cfg.loss.part_based.reid_weight=0.0 \
+    modules.reid.cfg.loss.part_based.team_weight=1.0 \
+    modules.reid.cfg.loss.part_based.role_weight=0.0 \
+    wandb.name=exp006 \
+    modules.reid.dataset.test.set_name=train
+
 
 << COMMENTOUT
 => Loaded ReidDataset
