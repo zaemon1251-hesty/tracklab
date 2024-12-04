@@ -147,7 +147,7 @@ class TrackingEngine(ABC):
     def default_step(self, batch: Any, task: str, detections: pd.DataFrame,
                      image_pred: pd.DataFrame, **kwargs):
         model = self.models[task]
-        self.callback(f"on_module_step_start", task=task, batch=batch)
+        self.callback("on_module_step_start", task=task, batch=batch)
         idxs, batch = batch
         idxs = idxs.cpu() if isinstance(idxs, torch.Tensor) else idxs
         if model.level == "image":

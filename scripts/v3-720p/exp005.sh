@@ -5,11 +5,21 @@
 #   アノテーションデータ v3
 
 
+# export CUDA_VISIBLE_DEVICES=2; python -m tracklab.main -cn soccernet-v3-720p-exp003 \
+#     modules.reid.cfg.loss.part_based.reid_weight=0.0 \
+#     modules.reid.cfg.loss.part_based.team_weight=1.0 \
+#     modules.reid.cfg.loss.part_based.role_weight=0.0 \
+#     modules.reid.dataset.train.max_samples_per_id=15 \
+#     modules.reid.dataset.test.max_samples_per_id=10 \
+#     wandb.name=exp005
+
+# 評価
+trained_weights="/local/moriy/model/soccernet/sn-gamestate/reid/sn-gamestate-v3-720p/2024-11-27-00-56-04/0/2024_11_27_00_56_38_56S826767d0-5838-4273-9b37-4f9b435ab7f8model/job-0_39_model.pth.tar"
 export CUDA_VISIBLE_DEVICES=2; python -m tracklab.main -cn soccernet-v3-720p-exp003 \
-    modules.reid.cfg.loss.part_based.reid_weight=0.0 \
-    modules.reid.cfg.loss.part_based.team_weight=1.0 \
-    modules.reid.cfg.loss.part_based.role_weight=0.0 \
-    wandb.name=exp005
+    modules.reid.training_enabled=False \
+    wandb.name=exp005 \
+    modules.reid.cfg.model.load_weights=$trained_weights \
+    dataset.nvid=20
 
 
 << COMMENTOUT
@@ -71,6 +81,5 @@ SSMD = 2.2704
 Role prediction accuracy for query = 83.63% and for gallery = 83.74% and on average = 83.72%
 visualize_ranking_grid for dataset SoccerNet, bp None and ids [ 972 7429 3287 1106]
 Test completed
-
 
 COMMENTOUT
