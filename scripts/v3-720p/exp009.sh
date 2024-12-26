@@ -1,5 +1,5 @@
 # 概要: reidを学習する
-# 仮説: ballやreferee otherも含めて学習して、いい感じかどうか確認 -> だめだった -> ballだけ追加する
+# 仮説: player と staffだけで学習する？
 # 設定:
 #   映像データ SoccerNet 720p
 #   アノテーションデータ v3

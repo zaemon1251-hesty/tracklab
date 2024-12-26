@@ -72,4 +72,19 @@ class YOLOv8(ImageLevelModule):
                         )
                     )
                     self.id += 1
+                elif bbox.cls == 32 and bbox.conf >= self.cfg.min_confidence:
+                    # Sports ball class
+                    detections.append(
+                        pd.Series(
+                            dict(
+                                image_id=metadata.name,
+                                bbox_ltwh=ltrb_to_ltwh(bbox.xyxy[0], shape),
+                                bbox_conf=bbox.conf[0],
+                                video_id=metadata.video_id,
+                                category_id=2,  # `ball` class
+                            ),
+                            name=self.id,
+                        )
+                    )
+                    self.id += 1
         return detections
