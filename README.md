@@ -1,6 +1,8 @@
+これは選手同定モジュールに関わるリポジトリです。
+
 選手同定モジュール実行のスクリプトはこのリポジトリで動かします。
 
-<https://github.com/zaemon1251-hesty/sn-gamestate> 側でpythonの実行環境を整えたのちに、このリポジトリの scripts/ 以下のスクリプトを実行してください。
+<https://github.com/zaemon1251-hesty/sn-gamestate> 側で実行環境を構築した後に、このリポジトリの scripts/ 以下のスクリプトを実行してください。
 
 以下はfork元のREADME.mdです。
 
