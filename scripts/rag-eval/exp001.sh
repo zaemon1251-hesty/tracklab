@@ -6,4 +6,3 @@ export CUDA_VISIBLE_DEVICES=3; python -m tracklab.main -cn soccernet-v2-exp005 \
     wandb.name=exp001 \
     modules.reid.cfg.model.load_weights=$trained_weights \
     dataset.dataset_path="/local/moriy/SoccerNetGS/rag-eval" \
-    'dataset.vids_dict.test=["SNGS-0029","SNGS-0030","SNGS-0031","SNGS-0032","SNGS-0033"]'

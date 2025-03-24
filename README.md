@@ -1,3 +1,10 @@
+選手同定モジュール実行のスクリプトはこのリポジトリで動かします。
+
+<https://github.com/zaemon1251-hesty/sn-gamestate> 側でpythonの実行環境を整えたのちに、このリポジトリの scripts/ 以下のスクリプトを実行してください。
+
+以下はfork元のREADME.mdです。
+
+---
 ![TrackLab](docs/tracklab_banner.png)
 
 TrackLab is an easy-to-use modular framework for multi-object pose/segmentation/bbox tracking that supports many tracking datasets and evaluation metrics.
